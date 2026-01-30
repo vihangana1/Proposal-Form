@@ -59,14 +59,30 @@ const ProjectForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // UPDATED: Logic to check for only Images and PDFs
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // 1. Check File Size (10MB)
       if (file.size > 10 * 1024 * 1024) {
         setMessage({ type: 'error', text: 'ගොනුව 10MB ට වඩා කුඩා විය යුතුය' });
+        e.target.value = ''; // Reset input
         return;
       }
+
+      // 2. Check File Type (PDF or Images)
+      const isPdf = file.type === 'application/pdf';
+      const isImage = file.type.startsWith('image/');
+
+      if (!isPdf && !isImage) {
+        setMessage({ type: 'error', text: 'කරුණාකර PDF හෝ පින්තූරයක් (Image) පමණක් තෝරන්න' });
+        e.target.value = ''; // Reset input
+        setFormData(prev => ({ ...prev, file: null }));
+        return;
+      }
+
       setFormData(prev => ({ ...prev, file }));
+      setMessage({ type: '', text: '' }); // Clear any previous error
     }
   };
 
@@ -271,45 +287,8 @@ const ProjectForm = () => {
                 />
               </div>
             </div>
-
-            <div style={styles.fileSection}>
-              <label style={styles.label}>
-                ගොනුව උඩුගත කරන්න / Upload File
-              </label>
-              <div style={styles.fileInputWrapper}>
-                <label style={styles.fileLabel}>
-                  <Upload style={styles.icon} />
-                  <span style={styles.fileText}>
-                    {formData.file ? formData.file.name : 'ගොනුවක් තෝරන්න'}
-                  </span>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    onChange={handleFileChange}
-                    style={styles.hiddenInput}
-                    accept=".pdf,.doc,.docx,.xls,.xlsx"
-                  />
-                </label>
-                {formData.file && (
-                    <button
-                        type="button"
-                        onClick={() => {
-                        setFormData(prev => ({ ...prev, file: null }));
-                        if (fileInputRef.current) {
-                            fileInputRef.current.value = ""; 
-                        }
-                        }}
-                        style={styles.removeFileBtn}
-                    >
-                        ඉවත් කරන්න
-                    </button>
-                    )}
-              </div>
-              <p style={styles.helpText}>
-                PDF, Word, or Excel files (Max 10MB)
-              </p>
-            </div>
-          </div>
+            <br />
+            <br />
 
           {/* Projects Section */}
           <div style={styles.projectsSection}>
@@ -451,8 +430,49 @@ const ProjectForm = () => {
               </div>
             ))}
           </div>
+          <br />
 
-          {/* Submit Button */}
+          <div style={styles.fileSection}>
+              <label style={styles.label}>
+                ගොනුව උඩුගත කරන්න / Upload File
+              </label>
+              <div style={styles.fileInputWrapper}>
+                <label style={styles.fileLabel}>
+                  <Upload style={styles.icon} />
+                  <span style={styles.fileText}>
+                    {formData.file ? formData.file.name : 'ගොනුවක් තෝරන්න'}
+                  </span>
+                  {/* UPDATED: Accept Images and PDF only */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    onChange={handleFileChange}
+                    style={styles.hiddenInput}
+                    accept="image/*,application/pdf"
+                  />
+                </label>
+                {formData.file && (
+                    <button
+                        type="button"
+                        onClick={() => {
+                        setFormData(prev => ({ ...prev, file: null }));
+                        if (fileInputRef.current) {
+                            fileInputRef.current.value = ""; 
+                        }
+                        }}
+                        style={styles.removeFileBtn}
+                    >
+                        ඉවත් කරන්න
+                    </button>
+                    )}
+              </div>
+              {/* UPDATED: Help text reflects images and PDF */}
+              <p style={styles.helpText}>
+                PDF or Image files (JPG, PNG) - Max 10MB
+              </p>
+            </div>
+          </div>
+
           <div style={styles.submitContainer}>
             <button
               type="submit"
@@ -476,12 +496,11 @@ const ProjectForm = () => {
             </button>
           </div>
 
-          {/* Message Display Moved to Bottom */}
           {message.text && (
             <div style={{
               ...styles.message,
               ...(message.type === 'success' ? styles.messageSuccess : styles.messageError),
-              marginTop: '24px' // Added spacing above the message
+              marginTop: '24px'
             }}>
               {message.text}
             </div>
@@ -492,7 +511,6 @@ const ProjectForm = () => {
   );
 };
 
-// Inline CSS Styles
 const styles = {
   container: {
     minHeight: '100vh',
@@ -528,7 +546,7 @@ const styles = {
   message: {
     padding: '16px',
     borderRadius: '8px',
-    textAlign: 'center' // Center the text in the message
+    textAlign: 'center' 
   },
   messageSuccess: {
     backgroundColor: '#F0FDF4',
