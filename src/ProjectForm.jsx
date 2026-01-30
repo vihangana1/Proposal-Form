@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-// Simple icon components (replacing lucide-react)
+// Simple icon components
 const Upload = ({ style }) => (
   <svg style={style} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -33,9 +33,7 @@ const ProjectForm = () => {
     file: null
   });
 
-  
   const fileInputRef = useRef(null);
-
 
   const [projects, setProjects] = useState([
     {
@@ -54,7 +52,6 @@ const ProjectForm = () => {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // ⚠️ IMPORTANT: Replace this with your Google Apps Script URL
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8ZgKUoWpMCQlUT0c6RKHiHT-m9843bBj___H780jlPh2Tu0WkE2LdSX9B7PH7sdBmqg/exec';
 
   const handleInputChange = (e) => {
@@ -126,32 +123,25 @@ const ProjectForm = () => {
   };
 
   const validateForm = () => {
-    // Check main fields
     if (!formData.district || !formData.dn || !formData.gn) {
       setMessage({ type: 'error', text: 'කරුණාකර සියලු ප්‍රධාන ක්ෂේත්‍ර පුරවන්න' });
       return false;
     }
-  
-    // NEW: Check if file is uploaded
     if (!formData.file) {
       setMessage({ type: 'error', text: 'කරුණාකර අදාළ ගොනුව උඩුගත කරන්න (File upload is required)' });
       return false;
     }
-  
-    // Check projects
     for (const project of projects) {
       if (!project.proposal || !project.estimatedCost) {
         setMessage({ type: 'error', text: 'කරුණාකර සියලු ව්‍යාපෘති විස්තර පුරවන්න' });
         return false;
       }
     }
-  
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
 
     setUploading(true);
@@ -159,7 +149,6 @@ const ProjectForm = () => {
 
     try {
       let fileData = null;
-      
       if (formData.file) {
         const base64 = await convertFileToBase64(formData.file);
         fileData = {
@@ -198,7 +187,6 @@ const ProjectForm = () => {
 
       setMessage({ type: 'success', text: 'දත්ත සාර්ථකව ඉදිරිපත් කරන ලදී!' });
       
-      // Reset form
       setFormData({ district: '', dn: '', gn: '', file: null });
       setProjects([{
         id: 1,
@@ -232,16 +220,6 @@ const ProjectForm = () => {
             Development Proposal Submission Form
           </p>
         </div>
-
-        {/* Message Display */}
-        {message.text && (
-          <div style={{
-            ...styles.message,
-            ...(message.type === 'success' ? styles.messageSuccess : styles.messageError)
-          }}>
-            {message.text}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
           {/* Main Fields */}
@@ -281,7 +259,7 @@ const ProjectForm = () => {
 
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>
-                  ග්‍රාම නිලධාරී කොට්ඨාසය / GN *
+                  ග්‍රාම නිලධාරී වසම / GN *
                 </label>
                 <input
                   type="text"
@@ -318,7 +296,7 @@ const ProjectForm = () => {
                         onClick={() => {
                         setFormData(prev => ({ ...prev, file: null }));
                         if (fileInputRef.current) {
-                            fileInputRef.current.value = ""; // This is the secret fix!
+                            fileInputRef.current.value = ""; 
                         }
                         }}
                         style={styles.removeFileBtn}
@@ -370,7 +348,7 @@ const ProjectForm = () => {
                 <div style={styles.gridTwo}>
                   <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }}>
                     <label style={styles.label}>
-                      සංවර්ධන යෝජනා / Development Proposal *
+                      සංවර්ධන යෝජනා (ව්‍යාපෘතියේ නම) / Development Proposal *
                     </label>
                     <textarea
                       value={project.proposal}
@@ -383,7 +361,7 @@ const ProjectForm = () => {
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>
-                        අපේක්ශිත දල ඇස්තමේන්තුව / Estimated Cost *
+                        අපේක්ෂිත දළ ඇස්තමේන්තුව / Estimated Cost *
                     </label>
                     <input
                         type="number"
@@ -396,7 +374,7 @@ const ProjectForm = () => {
 
                     <div style={styles.fieldGroup}>
                     <label style={styles.label}>
-                        සංවර්දන ප්‍රවේශ / Development Approach
+                        සංවර්දන ප්‍රවේශය / Development Approach
                     </label>
                     <select
                         value={project.approach}
@@ -416,7 +394,7 @@ const ProjectForm = () => {
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>
-                      තිරසර සංවර්දන ඉලක්ක / SDG Goals
+                      තිරසර සංවර්ධන ඉලක්ක / SDG Goals
                     </label>
                     <input
                       type="text"
@@ -428,7 +406,7 @@ const ProjectForm = () => {
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>
-                        අපේක්ශිත ප්‍රතිපාදන ප්‍රබව / Funding Source
+                        අපේක්ශිත ප්‍රතිපාදන ප්‍රභවය / Funding Source
                     </label>
                     <select
                         value={project.fundingSource}
@@ -443,21 +421,11 @@ const ProjectForm = () => {
                     </select>
                     </div>
 
-                  <div style={styles.fieldGroup}>
-                    <label style={styles.label}>
-                      නම / Name
-                    </label>
-                    <input
-                      type="text"
-                      value={project.name}
-                      onChange={(e) => handleProjectChange(project.id, 'name', e.target.value)}
-                      style={styles.input}
-                    />
-                  </div>
+                  
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>
-                      ක්‍රියාත්මක ආයතන / Implementing Institution
+                      ක්‍රියාත්මක ආයතනය / Implementing Institution
                     </label>
                     <input
                       type="text"
@@ -466,6 +434,19 @@ const ProjectForm = () => {
                       style={styles.input}
                     />
                   </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>
+                      නම (ක්‍රියාත්මක ආයතනය ) / Name
+                    </label>
+                    <input
+                      type="text"
+                      value={project.name}
+                      onChange={(e) => handleProjectChange(project.id, 'name', e.target.value)}
+                      style={styles.input}
+                    />
+                  </div>
+                  
                 </div>
               </div>
             ))}
@@ -494,6 +475,17 @@ const ProjectForm = () => {
               )}
             </button>
           </div>
+
+          {/* Message Display Moved to Bottom */}
+          {message.text && (
+            <div style={{
+              ...styles.message,
+              ...(message.type === 'success' ? styles.messageSuccess : styles.messageError),
+              marginTop: '24px' // Added spacing above the message
+            }}>
+              {message.text}
+            </div>
+          )}
         </form>
       </div>
     </div>
@@ -534,9 +526,9 @@ const styles = {
     marginTop: '8px'
   },
   message: {
-    marginBottom: '24px',
     padding: '16px',
-    borderRadius: '8px'
+    borderRadius: '8px',
+    textAlign: 'center' // Center the text in the message
   },
   messageSuccess: {
     backgroundColor: '#F0FDF4',
