@@ -52,8 +52,7 @@ const ProjectForm = () => {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8ZgKUoWpMCQlUT0c6RKHiHT-m9843bBj___H780jlPh2Tu0WkE2LdSX9B7PH7sdBmqg/exec';
-
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxL0bHsfrslXj2d_YzyUObhM-uJJac76RBwJr-_cQiyoy0Ve8d7NdDtbeFbVNa1T3X30w/exec'
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
